@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculator by GJ</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f2f2f2;
+      font-family: Arial, sans-serif;
+    }
+
+    .calculator {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      /* Use grid layout for a more uniform square button layout */
+      display: grid;
+      grid-template-columns: repeat(4, auto);
+      grid-gap: 10px;
+      justify-items: center;
+      align-items: center;
+    }
+
+    #display {
+      grid-column: span 4;
+      width: 100%;
+      height: 50px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      text-align: right;
+      padding: 10px;
+      font-size: 24px;
+      background-color: #fafafa;
+    }
+
+    button {
+      /* Remove preset height to use aspect-ratio for squareness */
+      width: 60px; /* Starting width, adjust as needed */
+      aspect-ratio: 1 / 1; /* Forces button to be square */
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background-color: #e0e0e0;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background-color: #ccc;
+    }
+    
+    button.operator {
+      background-color: #f39c12;
+      color: #fff;
+    }
+    
+    button.operator:hover {
+      background-color: #e67e22;
+    }
+    
+    button.clear {
+      background-color: #d9534f;
+      color: #fff;
+    }
+    
+    button.clear:hover {
+      background-color: #c9302c;
+    }
+    
+    /* Make the "=" button span all columns if you prefer a wide button */
+    .equals {
+      grid-column: span 4;
+      width: 100%;
+      height: 60px;
+      font-size: 18px;
+      border: none;
+      border-radius: 5px;
+      background-color: #e0e0e0;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .equals:hover {
+      background-color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="calculator">
+    <div id="display">0</div>
+    
+    <!-- Button rows defined using grid layout -->
+    <button onclick="appendNumber('7')">7</button>
+    <button onclick="appendNumber('8')">8</button>
+    <button onclick="appendNumber('9')">9</button>
+    <button class="operator" onclick="setOperation('/')">/</button>
+    
+    <button onclick="appendNumber('4')">4</button>
+    <button onclick="appendNumber('5')">5</button>
+    <button onclick="appendNumber('6')">6</button>
+    <button class="operator" onclick="setOperation('*')">*</button>
+    
+    <button onclick="appendNumber('1')">1</button>
+    <button onclick="appendNumber('2')">2</button>
+    <button onclick="appendNumber('3')">3</button>
+    <button class="operator" onclick="setOperation('-')">-</button>
+    
+    <button onclick="appendNumber('0')">0</button>
+    <button onclick="appendNumber('.')">.</button>
+    <button class="clear" onclick="clearDisplay()">C</button>
+    <button class="operator" onclick="setOperation('+')">+</button>
+    
+    <!-- "=" button as a wide button spanning all columns -->
+    <button class="equals" onclick="calculateResult()">=</button>
+  </div>
+
+  <script>
+    // Variables to hold the current and previous input and the selected operation
+    let currentInput = '';
+    let previousInput = '';
+    let operation = null;
+
+    // Reference to the display element
+    const displayElement = document.getElementById('display');
+
+    // Update the display with the current input
+    function updateDisplay() {
+      displayElement.innerText = currentInput === '' ? '0' : currentInput;
+    }
+
+    // Append a number (or decimal point) to the current input
+    function appendNumber(num) {
+      if (num === '.' && currentInput.includes('.')) return;
+      currentInput += num;
+      updateDisplay();
+    }
+
+    // Set the chosen arithmetic operation
+    function setOperation(op) {
+      if (currentInput === '') return;
+      if (previousInput !== '') {
+        calculateResult();
+      }
+      operation = op;
+      previousInput = currentInput;
+      currentInput = '';
+    }
+
+    // Perform the calculation based on the selected operation
+    function calculateResult() {
+      const prev = parseFloat(previousInput);
+      const current = parseFloat(currentInput);
+      if (isNaN(prev) || isNaN(current)) return;
+      
+      let result;
+      switch (operation) {
+        case '+':
+          result = prev + current;
+          break;
+        case '-':
+          result = prev - current;
+          break;
+        case '*':
+          result = prev * current;
+          break;
+        case '/':
+          // Check to prevent division by zero
+          result = current !== 0 ? prev / current : 'Error';
+          break;
+        default:
+          return;
+      }
+      currentInput = result.toString();
+      operation = null;
+      previousInput = '';
+      updateDisplay();
+    }
+
+    // Clear all inputs and reset the display
+    function clearDisplay() {
+      currentInput = '';
+      previousInput = '';
+      operation = null;
+      updateDisplay();
+    }
+  </script>
+</body>
+</html>
